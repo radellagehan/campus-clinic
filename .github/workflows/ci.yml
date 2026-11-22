@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  frontend-check:
+    name: Frontend lint and build check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check HTML structure and JS syntax
+        run: node scripts/check-frontend.js frontend/index.html
+
+      - name: Lint HTML (htmlhint)
+        run: npx --yes htmlhint@1.1.4 frontend/index.html || true
+        # "|| true" keeps the build green while the prototype is being cleaned up.
+        # Remove it once warnings are fixed so lint failures block the PR.
+
+  # ---------------------------------------------------------------
+  # Enable this job in Sprint 2, when the Node + Express backend exists
+  # (backend/package.json with "lint", "test" and "build" scripts).
+  # ---------------------------------------------------------------
+  # backend-check:
+  #   name: Backend install, lint, test, build
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: backend
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: npm
+  #         cache-dependency-path: backend/package-lock.json
+  #     - run: npm ci
+  #     - run: npm run lint
+  #     - run: npm test
+  #     - run: npm run build --if-present

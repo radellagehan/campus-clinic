@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campus Clinic</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fredoka:wght@500;600&family=Poppins:wght@500;600;700&display=swap">
+<style>
+/* ===== Palette: edit here ===== */
+:root{--blue:#0B5FA5;--teal:#12A594;--bg:#F4F8FB;--navy:#12263F;--red:#C8323C;--line:#DCE6EE;--muted:#5B6F85;--white:#fff;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:Inter,system-ui,sans-serif;line-height:1.5}
+h1,h2,h3,.po{font-family:Poppins,sans-serif;margin:0;font-weight:600}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-4px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.top{background:var(--navy);color:#cfe0f0;font-size:.8rem}.top .wrap{display:flex;gap:6px 20px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.top span{display:flex;gap:6px;align-items:center}.top .em{color:#ffb3b8;margin-left:auto}
+.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.nav .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.logo{display:flex;gap:8px;align-items:center;font-family:Poppins;font-weight:600;color:var(--blue);font-size:1.15rem;margin-right:auto}
+.menu{display:flex;gap:4px;flex-wrap:wrap}
+.menu button,.btn{font:inherit;font-weight:500;border:1px solid transparent;border-radius:8px;padding:8px 14px;cursor:pointer;background:none;color:var(--navy);transition:.15s}
+.menu button:hover{background:var(--bg)}.menu button.on{color:var(--blue);background:#E6F0F9}
+.btn{border-color:var(--line);background:#fff}.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.pri:hover{background:#094c85;color:#fff}
+.btn.tl{background:var(--teal);color:#fff;border-color:var(--teal)}.btn.sm{padding:4px 10px;font-size:.85rem}
+.btn.ghost{background:rgba(255,255,255,.15);color:#fff;border-color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+/* Photo blocks: gradient is the fallback, PHOTOS config adds a real image on top */
+.ph{background:linear-gradient(135deg,#0B5FA5,#12A594);background-size:cover;background-position:center;position:relative;color:#fff;display:grid;align-content:center}
+.hero{min-height:340px;border-radius:0}.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b2e55dd,#0b2e5588)}
+.hero .wrap{position:relative;padding-top:48px;padding-bottom:48px}.hero h1{font-size:clamp(1.9rem,5vw,2.8rem);max-width:560px}.hero p{max-width:520px;opacity:.92}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:-30px;position:relative}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px #12263f12;margin:12px 0}
+.strip .card{display:flex;gap:12px;align-items:center;margin:0}.strip .ic{color:var(--teal);width:28px;height:28px}
+.strip b{display:block}.strip small{color:var(--muted)}
+.sec{padding:34px 0}.sec h2{font-size:1.5rem;margin-bottom:4px}.sub{color:var(--muted);margin:0 0 16px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.svc{padding:0;overflow:hidden;margin:0}.svc .ph{height:120px;justify-items:center}.svc .ph .ic{width:40px;height:40px}.svc div.b{padding:14px}
+.step{text-align:center}.step i{font-style:normal;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#E6F0F9;color:var(--blue);margin:0 auto 8px;font-family:Poppins;font-weight:600}
+.pg{padding:24px 0 50px;min-height:60vh}.pg h2{font-size:1.4rem;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:.92rem}th{text-align:left;color:var(--muted);font-weight:500;border-bottom:1px solid var(--line);padding:8px}td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.Diajukan{background:#FFF3CD;color:#7A5A00}.Diterima{background:#D8F1DF;color:#1B6B36}.Ditolak{background:#F9D9DC;color:#9B2530}.JadwalUlang{background:#E9DEFA;color:#5B3CA0}.Menunggu{background:#DCEBFA;color:#0B5FA5}.Dipanggil{background:#FFE3C4;color:#965100}.DalamLayanan{background:#D2F1EC;color:#0B6F62}.Selesai{background:#BFE5CB;color:#14532D}.TidakHadir,.Dibatalkan,.Full{background:#E6EAEE;color:#5B6F85}
+label{display:block;font-weight:500;margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #B8C7D6;border-radius:8px;background:#fff;color:var(--navy)}
+.split{display:grid;grid-template-columns:1fr 1fr;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:0 2px 8px #12263f12}
+.split .ph{padding:32px;min-height:320px}.split form,.split .fm{padding:28px}
+@media(max-width:700px){.split{grid-template-columns:1fr}.split .ph{min-height:160px}.top .em{margin-left:0}}
+.steps{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}.steps span{padding:4px 12px;border-radius:999px;background:#E6EAEE;font-size:.85rem;color:var(--muted)}.steps .on{background:var(--blue);color:#fff}.steps .done{background:#D2F1EC;color:#0B6F62}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.slot{font:inherit;border:1px solid #B8C7D6;background:#fff;border-radius:8px;padding:8px;cursor:pointer;text-align:center}.slot:hover:not(:disabled){border-color:var(--blue)}.slot.sel{background:var(--blue);color:#fff;border-color:var(--blue)}.slot:disabled{background:var(--bg);color:#9aa9b9;cursor:not-allowed}
+.msg{padding:10px 14px;border-radius:8px;margin:12px 0;border:1px solid}.ok{background:#E8F7EE;border-color:#9ED5B1;color:#14532D}.err{background:#FDECEE;border-color:#F0B2B8;color:#9B2530}
+.note{font-size:.82rem;color:var(--muted);margin-top:8px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.kpi .card{margin:0}.kpi b{display:block;font-family:Poppins;font-size:2rem;color:var(--blue)}
+.bar{height:16px;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--teal));margin:4px 0 10px}
+.board{display:grid;grid-template-columns:1fr 1.3fr;gap:14px}@media(max-width:700px){.board{grid-template-columns:1fr}}
+.now{background:var(--navy);color:#fff;border-radius:12px;padding:24px;text-align:center}.now b{display:block;font-family:Poppins;font-size:4rem;color:#6FE3D3;line-height:1.1}
+.modal{position:fixed;inset:0;background:#12263f99;display:grid;place-items:center;padding:16px;z-index:9}.modal .card{max-width:420px;width:100%}
+footer{background:var(--navy);color:#cfe0f0;padding:30px 0 20px;font-size:.9rem}footer .g4{margin-bottom:16px}footer h3{color:#fff;font-size:1rem;margin-bottom:6px}
+footer a{color:#cfe0f0;display:block;cursor:pointer;margin:3px 0}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3ecf8e;margin-right:6px}
+.hide{display:none!important}
+/* ===== Sticker-journal layer (blue + teal) ===== */
+body{background:linear-gradient(90deg,#cfe8f799 50%,transparent 50%) 0 0/44px 44px,linear-gradient(#cfe8f799 50%,transparent 50%) 0 0/44px 44px,var(--bg)}
+h1,h2,h3,.po,.logo,.kpi b,.now b,.step i{font-family:Fredoka,Poppins,sans-serif}
+main{position:relative;z-index:1}
+.nav::after{content:"";position:absolute;left:0;right:0;top:100%;height:16px;pointer-events:none;background:radial-gradient(circle at 14px 0,#BFE4F5 13px,transparent 14px) 0 0/56px 16px repeat-x,radial-gradient(circle at 42px 0,#9FE0D6 13px,transparent 14px) 0 0/56px 16px repeat-x}
+.card{border:2px dashed #8FBCDD;border-radius:20px;box-shadow:0 4px 0 #cfe8f7}
+.btn,.menu button{border-radius:999px}
+.badge{border:1.5px solid currentColor;transform:rotate(-2deg)}
+.sec>h2,.pg>h2,.rib{display:inline-block;background:var(--blue);color:#fff;padding:6px 34px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 50%,100% 100%,0 100%,14px 50%)}
+.pg>h2 small{color:#d6eaf8!important}
+.rib{font-size:.95rem;background:var(--teal);padding:4px 28px;margin-bottom:6px}
+.stk{filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 3px 3px #12263f33)}
+.stkr{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#fff;border:3px dashed var(--teal);color:var(--blue);transform:rotate(-8deg);box-shadow:0 3px 0 #cfe8f7}
+.stkr .ic{width:26px;height:26px}
+.fl{position:fixed;z-index:0;animation:fl 5s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-12px) rotate(6deg)}}
+@media(max-width:900px){.fl{display:none}}
+@media(prefers-reduced-motion:reduce){.fl{animation:none}}
+.hdoc{position:absolute;right:28px;bottom:0;z-index:1}
+.hs1{position:absolute;right:240px;top:44px;z-index:1}.hs2{position:absolute;right:24px;top:30px;z-index:1}
+@media(max-width:760px){.hdoc,.hs1,.hs2{display:none}}
+.svc .ph{background:linear-gradient(90deg,#ffffff2e 50%,transparent 50%) 0 0/24px 24px,linear-gradient(#ffffff2e 50%,transparent 50%) 0 0/24px 24px,linear-gradient(135deg,#0B5FA5,#12A594)}
+.svc .ph .ic{background:#fff;color:var(--blue);border-radius:50%;padding:14px;width:68px;height:68px;border:3px dashed var(--teal)}
+.step i{background:#fff;border:3px dashed var(--teal);transform:rotate(-6deg)}
+.now{border:4px solid #fff;outline:3px dashed #9FE0D6;border-radius:28px}
+.pg>.card::before{content:"✚";position:absolute;top:-13px;right:16px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--red);border:2px solid var(--red);transform:rotate(8deg);font-size:14px}
+.pg>.card{position:relative}
+</style></head><body>
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-cross" viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></symbol>
+<symbol id="i-steth" viewBox="0 0 24 24"><path d="M6 3v6a4 4 0 0 0 8 0V3M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-queue" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+<symbol id="i-pill" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="M9.5 8.5l6 6"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+<symbol id="doc" viewBox="0 0 100 110"><path d="M15 110Q15 72 50 72Q85 72 85 110Z" fill="#fff" stroke="#12263F" stroke-width="2.5"/><path d="M38 74L50 94L62 74" fill="#CFE8F7" stroke="#12263F" stroke-width="2"/><path d="M50 8C22 8 18 34 20 52C22 66 32 76 50 76C68 76 78 66 80 52C82 34 78 8 50 8Z" fill="#9FE0D6" stroke="#12263F" stroke-width="2.5"/><path d="M50 11v9M45.5 15.5h9" stroke="#0B5FA5" stroke-width="4" stroke-linecap="round"/><ellipse cx="50" cy="46" rx="21" ry="22" fill="#FFE7C2" stroke="#12263F" stroke-width="2"/><circle cx="42" cy="45" r="2.6" fill="#12263F"/><circle cx="58" cy="45" r="2.6" fill="#12263F"/><circle cx="36" cy="54" r="4.5" fill="#FFC8DD"/><circle cx="64" cy="54" r="4.5" fill="#FFC8DD"/><path d="M44 55Q50 61 56 55" stroke="#12263F" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 78Q34 98 50 98Q66 98 64 78" stroke="#0B5FA5" stroke-width="2.5" fill="none"/><circle cx="50" cy="100" r="4" fill="#12A594" stroke="#12263F" stroke-width="2"/><path d="M72 90v8M68 94h8" stroke="#C8323C" stroke-width="3" stroke-linecap="round"/></symbol>
+</defs></svg>
+
+<div class="top"><div class="wrap"><span><svg class="ic"><use href="#i-phone"/></svg>(021) 555-0123</span><span><svg class="ic"><use href="#i-mail"/></svg>clinic@campus.edu</span><span><svg class="ic"><use href="#i-clock"/></svg>Mon–Fri 08:00–15:00</span><span class="em"><svg class="ic"><use href="#i-cross"/></svg>Emergency: 119 ext. 24</span></div></div>
+<header class="nav"><div class="wrap">
+<div class="logo"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#0B5FA5"/><path d="M17 8h6v9h9v6h-9v9h-6v-9H8v-6h9z" fill="#fff"/><path d="M6 31h8l3-6 4 9 3-5h10" fill="none" stroke="#12A594" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Campus Clinic</div>
+<nav class="menu" id="menu" aria-label="Main"></nav><span id="auth"></span></div></header>
+<main id="main"></main>
+<footer><div class="wrap"><div class="g4"><div><h3>Campus Clinic</h3>Building C, Ground Floor<br>Campus Avenue 1, Jakarta</div><div><h3>Contact</h3>(021) 555-0123<br>clinic@campus.edu</div><div><h3>Quick links</h3><a onclick="go('home')">Home</a><a onclick="go('services')">Services</a></div><div><h3>System Status</h3><a href="#status" onclick="go('status')"><span id="hc"><i class="dot"></i>System OK</span></a></div></div>&copy; 2026 Campus Clinic. Short complaint notes only; no medical records are stored.</div></footer>
+<div id="modal"></div>
+<span class="fl stkr" style="top:30%;left:10px"><svg class="ic"><use href="#i-steth"/></svg></span><span class="fl stkr" style="top:50%;right:10px;animation-delay:1s"><svg class="ic"><use href="#i-pill"/></svg></span><span class="fl stkr" style="top:72%;left:10px;animation-delay:2s"><svg class="ic"><use href="#i-pulse"/></svg></span><span class="fl stkr" style="top:18%;right:10px;animation-delay:3s"><svg class="ic"><use href="#i-cross"/></svg></span>
+<script>
+/* ===== Photos: paste your own image URLs here (Unsplash or the clinic's own). Empty = gradient fallback. ===== */
+const PHOTOS={hero:"",login:"",svc:["","","",""]};
+const bg=u=>u?`style="background-image:linear-gradient(#0b2e5533,#0b2e5533),url('${u}')"`:"";
+
+/* ===== Dummy data (replace with: /api/auth/login, /api/slots, /api/appointments, /api/queue/today, /api/dashboard/summary, /api/health) ===== */
+const ymd=d=>d.toISOString().slice(0,10);
+const nextWD=d=>{d=new Date(d);while([0,6].includes(d.getDay()))d.setDate(d.getDate()+1);return d};
+let days=[];{let d=nextWD(new Date());for(let i=0;i<4;i++){days.push(ymd(d));d=nextWD(new Date(d.getTime()+864e5))}}
+const TODAY=days[0];
+let users=[{id:1,name:"Admin Annie",email:"admin@campus.edu",pw:"admin123",role:"admin"},{id:2,name:"Nurse Nina",email:"nina@campus.edu",pw:"staff123",role:"staff"},{id:3,name:"Dr. Dimas",email:"dimas@campus.edu",pw:"staff123",role:"staff"},{id:4,name:"Sari Putri",email:"sari@campus.edu",pw:"student123",role:"student"},{id:5,name:"Budi Santoso",email:"budi@campus.edu",pw:"student123",role:"student"},{id:6,name:"Citra Lestari",email:"citra@campus.edu",pw:"student123",role:"student"}];
+let services=[{n:"General Consultation",d:"Talk to a clinic doctor about common health concerns.",i:"steth"},{n:"Light Examination",d:"Basic checks such as blood pressure, temperature and minor injuries.",i:"pulse"},{n:"Health Certificate",d:"Fit-to-study or internship health certificates.",i:"cross"},{n:"Counseling",d:"A calm, confidential space to talk with a counselor.",i:"user"}];
+let slots=[],aid=1,appts=[];
+(function(){let id=1;const f=n=>String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");days.forEach(d=>{for(let m=480;m<900;m+=30)slots.push({id:id++,date:d,start:f(m),end:f(m+30),quota:2,booked:0})})})();
+function seed(uid,svc,date,time,note,status,x={}){const s=slots.find(s=>s.date==date&&s.start==time);if(s&&!["Ditolak","Dibatalkan"].includes(status))s.booked++;appts.push({id:aid++,uid,svc,date,time,note,status,reason:"",q:null,qs:null,...x})}
+seed(4,0,TODAY,"08:00","Headache since morning","Diterima",{q:1,qs:"Selesai"});
+seed(5,1,TODAY,"08:30","Sprained ankle","Diterima",{q:2,qs:"Dalam Layanan"});
+seed(6,3,TODAY,"09:00","Stress before exams","Diterima",{q:3,qs:"Dipanggil"});
+seed(4,0,TODAY,"09:30","Cough and cold","Diterima",{q:4,qs:"Menunggu"});
+seed(5,0,TODAY,"10:00","Dizziness","Diterima",{q:5,qs:"Tidak Hadir"});
+seed(4,2,days[1],"09:00","Certificate for internship","Diajukan");
+seed(5,0,days[1],"10:00","Sore throat","Diajukan");
+seed(6,0,days[2],"10:30","Fever","Ditolak",{reason:"Please visit the emergency room for high fever."});
+seed(4,1,days[3],"11:00","Blood pressure check","Jadwal Ulang");
+seed(6,3,days[2],"13:00","Need to talk","Dibatalkan");
+let me=null,tab="up",bk={step:1,svc:0,date:null,slot:null};
+const $=id=>document.getElementById(id),cls=s=>s.replace(/ /g,""),badge=s=>`<span class="badge ${cls(s)}">${s}</span>`;
+const uname=id=>users.find(u=>u.id==id)?.name||"?",left=s=>s.quota-s.booked,qf=n=>"A-"+String(n).padStart(3,"0");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ic=n=>`<svg class="ic"><use href="#i-${n}"/></svg>`;
+const msg=(id,t,bad)=>$(id).innerHTML=`<div class="msg ${bad?"err":"ok"}" role="alert">${t}</div>`;
+const activeQ=()=>appts.filter(a=>a.date==TODAY&&a.q&&!["Selesai","Tidak Hadir"].includes(a.qs)).length;
+
+/* ===== Navigation (role-based) ===== */
+const menus={guest:[["home","Home"],["services","Services"]],student:[["home","Home"],["services","Services"],["book","Book Appointment"],["mine","My Appointments"]],staff:[["home","Home"],["pending","Pending Requests"],["queue","Today's Queue"],["dash","Dashboard"]],admin:[["home","Home"],["pending","Pending"],["queue","Queue"],["dash","Dashboard"],["manage","Services & Slots"],["users","Users"]]};
+const R=()=>me?me.role:"guest";
+function go(v){let rd=false;if(!['login','status'].includes(v)&&!menus[R()].some(m=>m[0]==v)){rd=!me;v=me?'home':'login'}
+$("menu").innerHTML=menus[R()].map(m=>`<button class="${m[0]==v?"on":""}" ${m[0]==v?'aria-current="page"':""} onclick="go('${m[0]}')">${m[1]}</button>`).join("");
+$("auth").innerHTML=me?`<small>${esc(me.name)}</small> <button class="btn sm" onclick="logout()">Logout</button>`:`<button class="btn pri" onclick="go('login')">Login</button>`;
+$("main").innerHTML=({home:homeView,services:servicesView,login:loginView,status:statusView,book:bookView,mine:mineView,pending:pendingView,queue:queueView,dash:dashView,manage:manageView,users:usersView})[v]();window.scrollTo(0,0);if(rd)msg("lm","Please sign in to open that page.",1);try{history.replaceState(null,"","#"+v)}catch(e){}}
+function cta(v){me?go(me.role=="student"?v:"queue"):go("login")}
+
+/* ===== Public pages ===== */
+function svcCards(){return `<div class="g4">${services.map((s,i)=>`<article class="card svc"><div class="ph" ${bg(PHOTOS.svc[i])} role="img" aria-label="${s.n}">${ic(s.i)}</div><div class="b"><h3>${s.n}</h3><p class="sub" style="margin:4px 0 0">${s.d}</p></div></article>`).join("")}</div>`}
+function homeView(){return `<section class="ph hero" ${bg(PHOTOS.hero)} role="img" aria-label="Modern hospital building"><svg class="hdoc stk" width="200" height="220" aria-hidden="true"><use href="#doc"/></svg><span class="stkr hs1">${ic("pill")}</span><span class="stkr hs2">${ic("pulse")}</span><div class="wrap"><h1>Your Health, Our Priority</h1><p>Book a visit with the campus clinic, track your queue number and skip the waiting room crowd.</p><p><button class="btn pri" style="background:#fff;color:var(--blue)" onclick="cta('book')">Book Appointment</button> <button class="btn ghost" onclick="cta('mine')">View Queue Status</button></p></div></section>
+<div class="wrap"><div class="strip"><div class="card">${ic("clock")}<div><b>Opening hours</b><small>Mon–Fri, 08:00–15:00</small></div></div><div class="card">${ic("queue")}<div><b>${activeQ()} in queue today</b><small>Updated live</small></div></div><div class="card">${ic("pin")}<div><b>Location</b><small>Building C, Ground Floor</small></div></div><div class="card">${ic("phone")}<div><b>Emergency</b><small>119 ext. 24</small></div></div></div>
+<section class="sec"><h2>Our services</h2><p class="sub">Four simple services for students and staff.</p>${svcCards()}</section>
+<section class="sec"><h2>How it works</h2><p class="sub">From request to consultation in four steps.</p><div class="g4">${["Choose service","Pick a slot","Get confirmation","Get queue number"].map((t,i)=>`<div class="card step"><i>${i+1}</i><b>${t}</b></div>`).join("")}</div></section></div>`}
+function servicesView(){return `<div class="wrap pg"><h2>Services</h2>${svcCards()}</div>`}
+
+/* ===== Auth ===== */
+function loginView(){return `<div class="wrap pg"><div class="split"><div class="ph" ${bg(PHOTOS.login)}><svg class="stk" width="110" height="121" aria-hidden="true"><use href="#doc"/></svg><h2>Welcome to Campus Clinic</h2><p>Sign in to book appointments and follow your queue.</p></div><div class="fm"><h2>Sign in</h2><label for="role">Role</label><select id="role"><option value="student">Student</option><option value="staff">Staff</option><option value="admin">Admin</option></select><label for="em">Email</label><input id="em" type="email" value="sari@campus.edu"><label for="pw">Password</label><input id="pw" type="password" value="student123"><div id="lm"></div><p><button class="btn pri" onclick="login()">Sign in</button> <button class="btn" onclick="registerStudent()">Register as student</button></p><p class="note">Demo: admin@campus.edu / admin123, nina@campus.edu / staff123, sari@campus.edu / student123</p></div></div></div>`}
+function login(){const r=$("role").value,e=$("em").value.trim(),p=$("pw").value;
+if(!/^\S+@\S+\.\S+$/.test(e)||!p)return msg("lm","Enter a valid email and password.",1);
+const u=users.find(u=>u.email==e&&u.pw==p&&u.role==r);if(!u)return msg("lm","Incorrect email, password or role.",1);
+me=u;go(r=="student"?"book":"pending")}
+function registerStudent(){const e=$("em").value.trim(),p=$("pw").value;
+if(!/^\S+@\S+\.\S+$/.test(e)||p.length<6)return msg("lm","Use a valid email and a password of at least 6 characters.",1);
+if(users.some(u=>u.email==e))return msg("lm","This email is already registered.",1);
+users.push({id:users.length+1,name:e.split("@")[0],email:e,pw:p,role:"student"});msg("lm","Account created. You can sign in now.")}
+function logout(){me=null;go("home")}
+
+/* ===== Student: booking stepper ===== */
+function bookView(){const s=bk.step,L=["Service","Date","Slot","Complaint"];bk.date=bk.date||days[0];
+const hd=`<div class="steps">${L.map((t,i)=>`<span class="${i+1==s?"on":i+1<s?"done":""}">${i+1}. ${t}</span>`).join("")}</div>`;
+let b="";
+if(s==1)b=`<label for="bs">Choose a service</label><select id="bs" onchange="bk.svc=+this.value">${services.map((x,i)=>`<option value="${i}" ${i==bk.svc?"selected":""}>${x.n}</option>`).join("")}</select>`;
+if(s==2)b=`<label for="bd">Choose a date (Mon–Fri)</label><select id="bd" onchange="bk.date=this.value;bk.slot=null">${days.map(d=>`<option ${d==bk.date?"selected":""}>${d}</option>`).join("")}</select>`;
+if(s==3)b=`<label>Pick a time slot</label><div class="slots">${slots.filter(x=>x.date==bk.date).map(x=>{const f=left(x)<=0;return `<button class="slot ${bk.slot==x.id?"sel":""}" ${f?"disabled":""} onclick="bk.slot=${x.id};go('book')">${x.start}<br><small>${f?"Full":left(x)+" left"}</small></button>`}).join("")}</div>`;
+if(s==4)b=`<label for="bn">Short complaint (required)</label><textarea id="bn" rows="3" maxlength="200" placeholder="e.g. headache since morning"></textarea><p class="note">Privacy: share only a short reason for your visit. Do not enter medical records.</p>`;
+return `<div class="wrap pg"><h2>Book an appointment</h2><div class="card">${hd}${b}<div id="bm"></div><p>${s>1?`<button class="btn" onclick="bk.step--;go('book')">Back</button> `:""}${s<4?`<button class="btn pri" onclick="nextStep()">Next</button>`:`<button class="btn tl" onclick="submitAppointment()">Submit request</button>`}</p></div></div>`}
+function nextStep(){if(bk.step==3&&!bk.slot)return msg("bm","Please select an available slot.",1);bk.step++;go("book")}
+function submitAppointment(){const note=$("bn").value.trim(),s=slots.find(x=>x.id==bk.slot);
+if(!note)return msg("bm","A short complaint is required.",1);
+if(!s||s.booked>=s.quota)return msg("bm","This slot is full. Please choose another one.",1);
+s.booked++;appts.push({id:aid++,uid:me.id,svc:bk.svc,date:s.date,time:s.start,note,status:"Diajukan",reason:"",q:null,qs:null});
+const d=s;bk={step:1,svc:0,date:null,slot:null};
+$("main").innerHTML=`<div class="wrap pg"><div class="card"><h2>Request submitted</h2><p>Your appointment on <b>${d.date}</b> at <b>${d.start}</b> is now ${badge("Diajukan")}. Staff will confirm it shortly.</p><button class="btn pri" onclick="go('mine')">View my appointments</button></div></div>`}
+
+/* ===== Student: my appointments ===== */
+function mineView(){const mine=appts.filter(a=>a.uid==me.id),hist=mine.filter(a=>["Selesai","Tidak Hadir"].includes(a.qs)),L=tab=="up"?mine.filter(a=>!hist.includes(a)):hist;
+const rows=L.map(a=>{const st=a.status=="Diterima"&&a.qs?a.qs:a.status,can=["Diajukan","Diterima"].includes(a.status)&&(!a.qs||a.qs=="Menunggu");
+return `<tr><td>${services[a.svc].n}</td><td>${a.date}<br>${a.time}</td><td>${a.q?qf(a.q):"-"}</td><td>${badge(st)}${a.reason?`<br><small>Reason: ${esc(a.reason)}</small>`:""}</td><td>${can?`<button class="btn sm" onclick="cancelAppointment(${a.id})">Cancel</button>`:""}</td></tr>`}).join("");
+return `<div class="wrap pg"><h2>My appointments</h2><p><button class="btn sm ${tab=="up"?"pri":""}" onclick="tab='up';go('mine')">Upcoming</button> <button class="btn sm ${tab=="h"?"pri":""}" onclick="tab='h';go('mine')">Visit history</button></p><div class="card scroll"><table><tr><th>Service</th><th>Date</th><th>Queue</th><th>Status</th><th></th></tr>${rows||'<tr><td colspan="5">Nothing here yet.</td></tr>'}</table></div></div>`}
+function cancelAppointment(id){if(!confirm("Cancel this appointment?"))return;const a=appts.find(x=>x.id==id);a.status="Dibatalkan";a.q=null;a.qs=null;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;go("mine")}
+
+/* ===== Staff: pending ===== */
+function pendingView(){const p=appts.filter(a=>a.status=="Diajukan");
+return `<div class="wrap pg"><h2>Pending requests</h2><div class="card scroll"><table><tr><th>Patient</th><th>Service</th><th>When</th><th>Complaint</th><th>Actions</th></tr>${p.map(a=>`<tr><td>${esc(uname(a.uid))}</td><td>${services[a.svc].n}</td><td>${a.date}<br>${a.time}</td><td>${esc(a.note)}</td><td><button class="btn sm tl" onclick="acceptAppointment(${a.id})">Accept</button> <button class="btn sm" onclick="modalReject(${a.id})">Reject</button> <button class="btn sm" onclick="modalResched(${a.id})">Reschedule</button></td></tr>`).join("")||'<tr><td colspan="5">No pending requests.</td></tr>'}</table></div></div>`}
+function acceptAppointment(id){const a=appts.find(x=>x.id==id);a.q=Math.max(0,...appts.filter(x=>x.date==a.date&&x.q).map(x=>x.q))+1;a.status="Diterima";a.qs="Menunggu";go("pending")}
+function closeModal(){$("modal").innerHTML=""}
+function modalReject(id){$("modal").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="card"><h3>Reject request</h3><label for="rr">Reason (required)</label><textarea id="rr" rows="3"></textarea><div id="rm"></div><p><button class="btn pri" onclick="rejectAppointment(${id})">Reject</button> <button class="btn" onclick="closeModal()">Cancel</button></p></div></div>`}
+function rejectAppointment(id){const r=$("rr").value.trim();if(!r)return msg("rm","A reason is required.",1);const a=appts.find(x=>x.id==id);a.status="Ditolak";a.reason=r;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;closeModal();go("pending")}
+function modalResched(id){$("modal").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="card"><h3>Reschedule</h3><label for="rs">New slot</label><select id="rs">${slots.filter(s=>left(s)>0).map(s=>`<option value="${s.id}">${s.date} ${s.start}</option>`).join("")}</select><p><button class="btn pri" onclick="rescheduleAppointment(${id})">Save</button> <button class="btn" onclick="closeModal()">Cancel</button></p></div></div>`}
+function rescheduleAppointment(id){const a=appts.find(x=>x.id==id),n=slots.find(x=>x.id==+$("rs").value),o=slots.find(x=>x.date==a.date&&x.start==a.time);if(o)o.booked--;n.booked++;a.date=n.date;a.time=n.start;a.status="Jadwal Ulang";closeModal();go("pending")}
+
+/* ===== Staff: queue board ===== */
+const FLOW={"Menunggu":["Dipanggil","Tidak Hadir"],"Dipanggil":["Dalam Layanan","Tidak Hadir"],"Dalam Layanan":["Selesai"]};
+function queueView(){const q=appts.filter(a=>a.date==TODAY&&a.q).sort((a,b)=>a.q-b.q),now=q.find(a=>a.qs=="Dalam Layanan")||q.find(a=>a.qs=="Dipanggil");
+return `<div class="wrap pg"><h2>Today's queue <small style="font-weight:400;color:var(--muted)">${TODAY}</small></h2><div class="board"><div class="now"><svg class="stk" width="64" height="70" aria-hidden="true"><use href="#doc"/></svg><br><span class="rib">Now Serving</span><b>${now?qf(now.q):"--"}</b>${now?badge(now.qs):"Waiting for next patient"}</div><div class="card" style="margin:0"><div class="scroll"><table><tr><th>No.</th><th>Patient</th><th>Status</th><th>Action</th></tr>${q.map(a=>`<tr><td><b>${qf(a.q)}</b></td><td>${esc(uname(a.uid))}<br><small>${services[a.svc].n}</small></td><td>${badge(a.qs)}${a.qs=="Menunggu"&&a.hadir?' <span class="badge Selesai">Checked in</span>':""}</td><td>${a.qs=="Menunggu"&&!a.hadir?`<button class="btn sm pri" onclick="checkIn(${a.id})">Check in</button> `:""}${(FLOW[a.qs]||[]).filter(n=>n!="Dipanggil"||a.hadir).map(n=>`<button class="btn sm ${n=="Tidak Hadir"?"":"tl"}" onclick="updateQueueStatus(${a.id},'${n}')">${n}</button>`).join(" ")}</td></tr>`).join("")||'<tr><td colspan="4">Queue is empty.</td></tr>'}</table></div></div></div></div>`}
+function updateQueueStatus(id,to){const a=appts.find(x=>x.id==id);if(!(FLOW[a.qs]||[]).includes(to))return alert("Invalid transition: steps cannot be skipped.");if(to=="Dipanggil"&&!a.hadir)return alert("Check in the patient first.");a.qs=to;go("queue")}
+function checkIn(id){const a=appts.find(x=>x.id==id);if(a.qs=="Menunggu"){a.hadir=true;go("queue")}}
+
+/* ===== Dashboard ===== */
+function dashView(){const t=appts.filter(a=>a.date==TODAY&&a.q),c=s=>t.filter(a=>a.qs==s).length;
+const k=[["Total patients today",t.length],["Waiting",c("Menunggu")],["In service",c("Dalam Layanan")],["Done",c("Selesai")],["No-show",c("Tidak Hadir")]];
+const per=services.map((s,i)=>appts.filter(a=>a.svc==i&&!["Ditolak","Dibatalkan"].includes(a.status)).length),mx=Math.max(1,...per);
+return `<div class="wrap pg"><h2>Dashboard</h2><div class="kpi">${k.map(x=>`<div class="card"><b>${x[1]}</b>${x[0]}</div>`).join("")}</div><div class="card"><h3>Workload per service</h3>${services.map((s,i)=>`<div>${s.n} (${per[i]})<div class="bar" style="width:${Math.max(4,per[i]/mx*100)}%"></div></div>`).join("")}</div></div>`}
+
+/* ===== Admin ===== */
+function manageView(){return `<div class="wrap pg"><h2>Services & slots</h2><div class="card"><h3>Services</h3>${services.map((s,i)=>`<p>${s.n} <button class="btn sm" onclick="delService(${i})">Remove</button></p>`).join("")}<div style="display:flex;gap:8px"><input id="ns" aria-label="New service name" placeholder="New service name"><button class="btn pri" onclick="addService()">Add</button></div></div>
+<div class="card"><h3>Add slot</h3><label for="sd">Date</label><input id="sd" type="date"><label for="s1">Start</label><input id="s1" type="time" value="08:00"><label for="s2">End</label><input id="s2" type="time" value="08:30"><label for="sq">Quota</label><input id="sq" type="number" value="2"><div id="sm"></div><p><button class="btn pri" onclick="addSlot()">Add slot</button></p></div>${slotList()}</div>`}
+function addService(){const v=$("ns").value.trim();if(v){services.push({n:v,d:"New service.",i:"cross"});go("manage")}}
+function delService(i){if(appts.some(a=>a.svc==i))return alert("This service is used by appointments.");services.splice(i,1);go("manage")}
+function addSlot(){const d=$("sd").value,a=$("s1").value,b=$("s2").value,q=+$("sq").value;
+if(!d||!a||!b)return msg("sm","Fill in date, start and end time.",1);
+if(!(q>0))return msg("sm","Quota must be greater than 0.",1);
+if([0,6].includes(new Date(d+"T00:00").getDay()))return msg("sm","The clinic is open Monday to Friday only.",1);
+if(a<"08:00"||b>"15:00"||a>=b)return msg("sm","Hours must be within 08:00–15:00 and start before end.",1);
+slots.push({id:Math.max(0,...slots.map(s=>s.id))+1,date:d,start:a,end:b,quota:q,booked:0});sf=d;go("manage");msg("sm","Slot added.")}
+function usersView(){return `<div class="wrap pg"><h2>Users</h2><div class="card scroll"><table><tr><th>Name</th><th>Email</th><th>Role</th></tr>${users.map(u=>`<tr><td>${esc(u.name)}</td><td>${u.email}</td><td>${u.role}</td></tr>`).join("")}</table></div></div>`}
+/* ===== Slot list: edit quota / delete (PB-03) ===== */
+let sf=null;
+function slotList(){sf=sf||days[0];const L=slots.filter(s=>s.date==sf).sort((a,b)=>a.start<b.start?-1:1);
+return `<div class="card"><h3>Slot list</h3><label for="sf">Date</label><select id="sf" onchange="sf=this.value;go('manage')">${[...new Set(slots.map(s=>s.date))].sort().map(d=>`<option ${d==sf?"selected":""}>${d}</option>`).join("")}</select><div id="sl"></div><div class="scroll"><table><tr><th>Time</th><th>Booked</th><th>Quota</th><th></th></tr>${L.map(s=>`<tr><td>${s.start}–${s.end}</td><td>${s.booked}</td><td><input type="number" id="q${s.id}" value="${s.quota}" min="1" style="width:70px" aria-label="Quota for ${s.start}"></td><td><button class="btn sm" onclick="editQuota(${s.id})">Save</button> <button class="btn sm" onclick="deleteSlot(${s.id})">Delete</button></td></tr>`).join("")}</table></div></div>`}
+function editQuota(id){const s=slots.find(x=>x.id==id),q=+$("q"+id).value;if(!(q>0))return msg("sl","Quota must be greater than 0.",1);if(q<s.booked)return msg("sl","Quota cannot be lower than the "+s.booked+" already booked.",1);s.quota=q;msg("sl","Quota updated.")}
+function deleteSlot(id){const s=slots.find(x=>x.id==id);if(s.booked>0)return msg("sl","This slot already has appointments and cannot be deleted.",1);slots=slots.filter(x=>x.id!=id);go("manage")}
+/* ===== System status (placeholder for GET /api/health) ===== */
+const BOOT=Date.now();
+function statusView(){const up=Math.floor((Date.now()-BOOT)/1000)+12*86400+5*3600+23*60,d=Math.floor(up/86400),h=Math.floor(up%86400/3600),m=Math.floor(up%3600/60);
+return `<div class="wrap pg"><h2>System Status</h2><div class="card"><p><span class="dot"></span><b>System OK</b></p><table><tr><td>Endpoint (placeholder)</td><td>GET /api/health</td></tr><tr><td>Checked at</td><td>${new Date().toLocaleString()}</td></tr><tr><td>Uptime (dummy)</td><td>${d}d ${h}h ${m}m</td></tr><tr><td>Version</td><td>0.1.0-prototype</td></tr></table><p class="note">Dummy values. The real response will come from /api/health once the backend is ready.</p><button class="btn" onclick="go('status')">Refresh</button></div></div>`}
+/* Deep links: #queue, #book, ... redirect to login when not signed in */
+addEventListener("hashchange",()=>go(location.hash.slice(1)||"home"));
+go(location.hash.slice(1)||"home");
+</script></body></html>
