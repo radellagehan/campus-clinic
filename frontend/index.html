@@ -42,7 +42,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 table{width:100%;border-collapse:collapse;font-size:.92rem}th{text-align:left;color:var(--muted);font-weight:500;border-bottom:1px solid var(--line);padding:8px}td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
 .scroll{overflow-x:auto}
 .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600;white-space:nowrap}
-.Diajukan{background:#FFF3CD;color:#7A5A00}.Diterima{background:#D8F1DF;color:#1B6B36}.Ditolak{background:#F9D9DC;color:#9B2530}.JadwalUlang{background:#E9DEFA;color:#5B3CA0}.Menunggu{background:#DCEBFA;color:#0B5FA5}.Dipanggil{background:#FFE3C4;color:#965100}.DalamLayanan{background:#D2F1EC;color:#0B6F62}.Selesai{background:#BFE5CB;color:#14532D}.TidakHadir,.Dibatalkan,.Full{background:#E6EAEE;color:#5B6F85}
+.Pending{background:#FFF3CD;color:#7A5A00}.Accepted{background:#D8F1DF;color:#1B6B36}.Rejected{background:#F9D9DC;color:#9B2530}.Rescheduled{background:#E9DEFA;color:#5B3CA0}.Waiting{background:#DCEBFA;color:#0B5FA5}.Called{background:#FFE3C4;color:#965100}.InService{background:#D2F1EC;color:#0B6F62}.Done{background:#BFE5CB;color:#14532D}.No-show,.Cancelled,.Full{background:#E6EAEE;color:#5B6F85}
 label{display:block;font-weight:500;margin:12px 0 4px}
 input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #B8C7D6;border-radius:8px;background:#fff;color:var(--navy)}
 .split{display:grid;grid-template-columns:1fr 1fr;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:0 2px 8px #12263f12}
@@ -128,24 +128,24 @@ let users=[{id:1,name:"Admin Annie",email:"admin@campus.edu",pw:"admin123",role:
 let services=[{n:"General Consultation",d:"Talk to a clinic doctor about common health concerns.",i:"steth"},{n:"Light Examination",d:"Basic checks such as blood pressure, temperature and minor injuries.",i:"pulse"},{n:"Health Certificate",d:"Fit-to-study or internship health certificates.",i:"cross"},{n:"Counseling",d:"A calm, confidential space to talk with a counselor.",i:"user"}];
 let slots=[],aid=1,appts=[];
 (function(){let id=1;const f=n=>String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");days.forEach(d=>{for(let m=480;m<900;m+=30)slots.push({id:id++,date:d,start:f(m),end:f(m+30),quota:2,booked:0})})})();
-function seed(uid,svc,date,time,note,status,x={}){const s=slots.find(s=>s.date==date&&s.start==time);if(s&&!["Ditolak","Dibatalkan"].includes(status))s.booked++;appts.push({id:aid++,uid,svc,date,time,note,status,reason:"",q:null,qs:null,...x})}
-seed(4,0,TODAY,"08:00","Headache since morning","Diterima",{q:1,qs:"Selesai"});
-seed(5,1,TODAY,"08:30","Sprained ankle","Diterima",{q:2,qs:"Dalam Layanan"});
-seed(6,3,TODAY,"09:00","Stress before exams","Diterima",{q:3,qs:"Dipanggil"});
-seed(4,0,TODAY,"09:30","Cough and cold","Diterima",{q:4,qs:"Menunggu"});
-seed(5,0,TODAY,"10:00","Dizziness","Diterima",{q:5,qs:"Tidak Hadir"});
-seed(4,2,days[1],"09:00","Certificate for internship","Diajukan");
-seed(5,0,days[1],"10:00","Sore throat","Diajukan");
-seed(6,0,days[2],"10:30","Fever","Ditolak",{reason:"Please visit the emergency room for high fever."});
-seed(4,1,days[3],"11:00","Blood pressure check","Jadwal Ulang");
-seed(6,3,days[2],"13:00","Need to talk","Dibatalkan");
+function seed(uid,svc,date,time,note,status,x={}){const s=slots.find(s=>s.date==date&&s.start==time);if(s&&!["Rejected","Cancelled"].includes(status))s.booked++;appts.push({id:aid++,uid,svc,date,time,note,status,reason:"",q:null,qs:null,...x})}
+seed(4,0,TODAY,"08:00","Headache since morning","Accepted",{q:1,qs:"Done"});
+seed(5,1,TODAY,"08:30","Sprained ankle","Accepted",{q:2,qs:"In Service"});
+seed(6,3,TODAY,"09:00","Stress before exams","Accepted",{q:3,qs:"Called"});
+seed(4,0,TODAY,"09:30","Cough and cold","Accepted",{q:4,qs:"Waiting"});
+seed(5,0,TODAY,"10:00","Dizziness","Accepted",{q:5,qs:"No-show"});
+seed(4,2,days[1],"09:00","Certificate for internship","Pending");
+seed(5,0,days[1],"10:00","Sore throat","Pending");
+seed(6,0,days[2],"10:30","Fever","Rejected",{reason:"Please visit the emergency room for high fever."});
+seed(4,1,days[3],"11:00","Blood pressure check","Rescheduled");
+seed(6,3,days[2],"13:00","Need to talk","Cancelled");
 let me=null,tab="up",bk={step:1,svc:0,date:null,slot:null};
 const $=id=>document.getElementById(id),cls=s=>s.replace(/ /g,""),badge=s=>`<span class="badge ${cls(s)}">${s}</span>`;
 const uname=id=>users.find(u=>u.id==id)?.name||"?",left=s=>s.quota-s.booked,qf=n=>"A-"+String(n).padStart(3,"0");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ic=n=>`<svg class="ic"><use href="#i-${n}"/></svg>`;
 const msg=(id,t,bad)=>$(id).innerHTML=`<div class="msg ${bad?"err":"ok"}" role="alert">${t}</div>`;
-const activeQ=()=>appts.filter(a=>a.date==TODAY&&a.q&&!["Selesai","Tidak Hadir"].includes(a.qs)).length;
+const activeQ=()=>appts.filter(a=>a.date==TODAY&&a.q&&!["Done","No-show"].includes(a.qs)).length;
 
 /* ===== Navigation (role-based) ===== */
 const menus={guest:[["home","Home"],["services","Services"]],student:[["home","Home"],["services","Services"],["book","Book Appointment"],["mine","My Appointments"]],staff:[["home","Home"],["pending","Pending Requests"],["queue","Today's Queue"],["dash","Dashboard"]],admin:[["home","Home"],["pending","Pending"],["queue","Queue"],["dash","Dashboard"],["manage","Services & Slots"],["users","Users"]]};
@@ -189,38 +189,38 @@ function nextStep(){if(bk.step==3&&!bk.slot)return msg("bm","Please select an av
 function submitAppointment(){const note=$("bn").value.trim(),s=slots.find(x=>x.id==bk.slot);
 if(!note)return msg("bm","A short complaint is required.",1);
 if(!s||s.booked>=s.quota)return msg("bm","This slot is full. Please choose another one.",1);
-s.booked++;appts.push({id:aid++,uid:me.id,svc:bk.svc,date:s.date,time:s.start,note,status:"Diajukan",reason:"",q:null,qs:null});
+s.booked++;appts.push({id:aid++,uid:me.id,svc:bk.svc,date:s.date,time:s.start,note,status:"Pending",reason:"",q:null,qs:null});
 const d=s;bk={step:1,svc:0,date:null,slot:null};
-$("main").innerHTML=`<div class="wrap pg"><div class="card"><h2>Request submitted</h2><p>Your appointment on <b>${d.date}</b> at <b>${d.start}</b> is now ${badge("Diajukan")}. Staff will confirm it shortly.</p><button class="btn pri" onclick="go('mine')">View my appointments</button></div></div>`}
+$("main").innerHTML=`<div class="wrap pg"><div class="card"><h2>Request submitted</h2><p>Your appointment on <b>${d.date}</b> at <b>${d.start}</b> is now ${badge("Pending")}. Staff will confirm it shortly.</p><button class="btn pri" onclick="go('mine')">View my appointments</button></div></div>`}
 
 /* ===== Student: my appointments ===== */
-function mineView(){const mine=appts.filter(a=>a.uid==me.id),hist=mine.filter(a=>["Selesai","Tidak Hadir"].includes(a.qs)),L=tab=="up"?mine.filter(a=>!hist.includes(a)):hist;
-const rows=L.map(a=>{const st=a.status=="Diterima"&&a.qs?a.qs:a.status,can=["Diajukan","Diterima"].includes(a.status)&&(!a.qs||a.qs=="Menunggu");
+function mineView(){const mine=appts.filter(a=>a.uid==me.id),hist=mine.filter(a=>["Done","No-show"].includes(a.qs)),L=tab=="up"?mine.filter(a=>!hist.includes(a)):hist;
+const rows=L.map(a=>{const st=a.status=="Accepted"&&a.qs?a.qs:a.status,can=["Pending","Accepted"].includes(a.status)&&(!a.qs||a.qs=="Waiting");
 return `<tr><td>${services[a.svc].n}</td><td>${a.date}<br>${a.time}</td><td>${a.q?qf(a.q):"-"}</td><td>${badge(st)}${a.reason?`<br><small>Reason: ${esc(a.reason)}</small>`:""}</td><td>${can?`<button class="btn sm" onclick="cancelAppointment(${a.id})">Cancel</button>`:""}</td></tr>`}).join("");
 return `<div class="wrap pg"><h2>My appointments</h2><p><button class="btn sm ${tab=="up"?"pri":""}" onclick="tab='up';go('mine')">Upcoming</button> <button class="btn sm ${tab=="h"?"pri":""}" onclick="tab='h';go('mine')">Visit history</button></p><div class="card scroll"><table><tr><th>Service</th><th>Date</th><th>Queue</th><th>Status</th><th></th></tr>${rows||'<tr><td colspan="5">Nothing here yet.</td></tr>'}</table></div></div>`}
-function cancelAppointment(id){if(!confirm("Cancel this appointment?"))return;const a=appts.find(x=>x.id==id);a.status="Dibatalkan";a.q=null;a.qs=null;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;go("mine")}
+function cancelAppointment(id){if(!confirm("Cancel this appointment?"))return;const a=appts.find(x=>x.id==id);a.status="Cancelled";a.q=null;a.qs=null;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;go("mine")}
 
 /* ===== Staff: pending ===== */
-function pendingView(){const p=appts.filter(a=>a.status=="Diajukan");
+function pendingView(){const p=appts.filter(a=>a.status=="Pending");
 return `<div class="wrap pg"><h2>Pending requests</h2><div class="card scroll"><table><tr><th>Patient</th><th>Service</th><th>When</th><th>Complaint</th><th>Actions</th></tr>${p.map(a=>`<tr><td>${esc(uname(a.uid))}</td><td>${services[a.svc].n}</td><td>${a.date}<br>${a.time}</td><td>${esc(a.note)}</td><td><button class="btn sm tl" onclick="acceptAppointment(${a.id})">Accept</button> <button class="btn sm" onclick="modalReject(${a.id})">Reject</button> <button class="btn sm" onclick="modalResched(${a.id})">Reschedule</button></td></tr>`).join("")||'<tr><td colspan="5">No pending requests.</td></tr>'}</table></div></div>`}
-function acceptAppointment(id){const a=appts.find(x=>x.id==id);a.q=Math.max(0,...appts.filter(x=>x.date==a.date&&x.q).map(x=>x.q))+1;a.status="Diterima";a.qs="Menunggu";go("pending")}
+function acceptAppointment(id){const a=appts.find(x=>x.id==id);a.q=Math.max(0,...appts.filter(x=>x.date==a.date&&x.q).map(x=>x.q))+1;a.status="Accepted";a.qs="Waiting";go("pending")}
 function closeModal(){$("modal").innerHTML=""}
 function modalReject(id){$("modal").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="card"><h3>Reject request</h3><label for="rr">Reason (required)</label><textarea id="rr" rows="3"></textarea><div id="rm"></div><p><button class="btn pri" onclick="rejectAppointment(${id})">Reject</button> <button class="btn" onclick="closeModal()">Cancel</button></p></div></div>`}
-function rejectAppointment(id){const r=$("rr").value.trim();if(!r)return msg("rm","A reason is required.",1);const a=appts.find(x=>x.id==id);a.status="Ditolak";a.reason=r;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;closeModal();go("pending")}
+function rejectAppointment(id){const r=$("rr").value.trim();if(!r)return msg("rm","A reason is required.",1);const a=appts.find(x=>x.id==id);a.status="Rejected";a.reason=r;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;closeModal();go("pending")}
 function modalResched(id){$("modal").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="card"><h3>Reschedule</h3><label for="rs">New slot</label><select id="rs">${slots.filter(s=>left(s)>0).map(s=>`<option value="${s.id}">${s.date} ${s.start}</option>`).join("")}</select><p><button class="btn pri" onclick="rescheduleAppointment(${id})">Save</button> <button class="btn" onclick="closeModal()">Cancel</button></p></div></div>`}
-function rescheduleAppointment(id){const a=appts.find(x=>x.id==id),n=slots.find(x=>x.id==+$("rs").value),o=slots.find(x=>x.date==a.date&&x.start==a.time);if(o)o.booked--;n.booked++;a.date=n.date;a.time=n.start;a.status="Jadwal Ulang";closeModal();go("pending")}
+function rescheduleAppointment(id){const a=appts.find(x=>x.id==id),n=slots.find(x=>x.id==+$("rs").value),o=slots.find(x=>x.date==a.date&&x.start==a.time);if(o)o.booked--;n.booked++;a.date=n.date;a.time=n.start;a.status="Rescheduled";closeModal();go("pending")}
 
 /* ===== Staff: queue board ===== */
-const FLOW={"Menunggu":["Dipanggil","Tidak Hadir"],"Dipanggil":["Dalam Layanan","Tidak Hadir"],"Dalam Layanan":["Selesai"]};
-function queueView(){const q=appts.filter(a=>a.date==TODAY&&a.q).sort((a,b)=>a.q-b.q),now=q.find(a=>a.qs=="Dalam Layanan")||q.find(a=>a.qs=="Dipanggil");
-return `<div class="wrap pg"><h2>Today's queue <small style="font-weight:400;color:var(--muted)">${TODAY}</small></h2><div class="board"><div class="now"><svg class="stk" width="64" height="70" aria-hidden="true"><use href="#doc"/></svg><br><span class="rib">Now Serving</span><b>${now?qf(now.q):"--"}</b>${now?badge(now.qs):"Waiting for next patient"}</div><div class="card" style="margin:0"><div class="scroll"><table><tr><th>No.</th><th>Patient</th><th>Status</th><th>Action</th></tr>${q.map(a=>`<tr><td><b>${qf(a.q)}</b></td><td>${esc(uname(a.uid))}<br><small>${services[a.svc].n}</small></td><td>${badge(a.qs)}${a.qs=="Menunggu"&&a.hadir?' <span class="badge Selesai">Checked in</span>':""}</td><td>${a.qs=="Menunggu"&&!a.hadir?`<button class="btn sm pri" onclick="checkIn(${a.id})">Check in</button> `:""}${(FLOW[a.qs]||[]).filter(n=>n!="Dipanggil"||a.hadir).map(n=>`<button class="btn sm ${n=="Tidak Hadir"?"":"tl"}" onclick="updateQueueStatus(${a.id},'${n}')">${n}</button>`).join(" ")}</td></tr>`).join("")||'<tr><td colspan="4">Queue is empty.</td></tr>'}</table></div></div></div></div>`}
-function updateQueueStatus(id,to){const a=appts.find(x=>x.id==id);if(!(FLOW[a.qs]||[]).includes(to))return alert("Invalid transition: steps cannot be skipped.");if(to=="Dipanggil"&&!a.hadir)return alert("Check in the patient first.");a.qs=to;go("queue")}
-function checkIn(id){const a=appts.find(x=>x.id==id);if(a.qs=="Menunggu"){a.hadir=true;go("queue")}}
+const FLOW={"Waiting":["Called","No-show"],"Called":["In Service","No-show"],"In Service":["Done"]};
+function queueView(){const q=appts.filter(a=>a.date==TODAY&&a.q).sort((a,b)=>a.q-b.q),now=q.find(a=>a.qs=="In Service")||q.find(a=>a.qs=="Called");
+return `<div class="wrap pg"><h2>Today's queue <small style="font-weight:400;color:var(--muted)">${TODAY}</small></h2><div class="board"><div class="now"><svg class="stk" width="64" height="70" aria-hidden="true"><use href="#doc"/></svg><br><span class="rib">Now Serving</span><b>${now?qf(now.q):"--"}</b>${now?badge(now.qs):"Waiting for next patient"}</div><div class="card" style="margin:0"><div class="scroll"><table><tr><th>No.</th><th>Patient</th><th>Status</th><th>Action</th></tr>${q.map(a=>`<tr><td><b>${qf(a.q)}</b></td><td>${esc(uname(a.uid))}<br><small>${services[a.svc].n}</small></td><td>${badge(a.qs)}${a.qs=="Waiting"&&a.checkedIn?' <span class="badge Done">Checked in</span>':""}</td><td>${a.qs=="Waiting"&&!a.checkedIn?`<button class="btn sm pri" onclick="checkIn(${a.id})">Check in</button> `:""}${(FLOW[a.qs]||[]).filter(n=>n!="Called"||a.checkedIn).map(n=>`<button class="btn sm ${n=="No-show"?"":"tl"}" onclick="updateQueueStatus(${a.id},'${n}')">${n}</button>`).join(" ")}</td></tr>`).join("")||'<tr><td colspan="4">Queue is empty.</td></tr>'}</table></div></div></div></div>`}
+function updateQueueStatus(id,to){const a=appts.find(x=>x.id==id);if(!(FLOW[a.qs]||[]).includes(to))return alert("Invalid transition: steps cannot be skipped.");if(to=="Called"&&!a.checkedIn)return alert("Check in the patient first.");a.qs=to;go("queue")}
+function checkIn(id){const a=appts.find(x=>x.id==id);if(a.qs=="Waiting"){a.checkedIn=true;go("queue")}}
 
 /* ===== Dashboard ===== */
 function dashView(){const t=appts.filter(a=>a.date==TODAY&&a.q),c=s=>t.filter(a=>a.qs==s).length;
-const k=[["Total patients today",t.length],["Waiting",c("Menunggu")],["In service",c("Dalam Layanan")],["Done",c("Selesai")],["No-show",c("Tidak Hadir")]];
-const per=services.map((s,i)=>appts.filter(a=>a.svc==i&&!["Ditolak","Dibatalkan"].includes(a.status)).length),mx=Math.max(1,...per);
+const k=[["Total patients today",t.length],["Waiting",c("Waiting")],["In service",c("In Service")],["Done",c("Done")],["No-show",c("No-show")]];
+const per=services.map((s,i)=>appts.filter(a=>a.svc==i&&!["Rejected","Cancelled"].includes(a.status)).length),mx=Math.max(1,...per);
 return `<div class="wrap pg"><h2>Dashboard</h2><div class="kpi">${k.map(x=>`<div class="card"><b>${x[1]}</b>${x[0]}</div>`).join("")}</div><div class="card"><h3>Workload per service</h3>${services.map((s,i)=>`<div>${s.n} (${per[i]})<div class="bar" style="width:${Math.max(4,per[i]/mx*100)}%"></div></div>`).join("")}</div></div>`}
 
 /* ===== Admin ===== */

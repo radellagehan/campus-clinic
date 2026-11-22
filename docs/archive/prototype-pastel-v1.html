@@ -30,7 +30,7 @@ main{max-width:980px;margin:0 auto;padding:12px 16px 90px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:2px dotted #6b4f3a44;padding:10px 0}
 .row:last-child{border:0}
 .tag{display:inline-block;padding:2px 12px;border-radius:999px;font-size:.8rem;border:2px solid var(--brown);font-family:Fredoka;transform:rotate(-2deg)}
-.Diajukan{background:#FFF0A8}.Diterima{background:var(--mint)}.Ditolak{background:#FFB3B8}.JadwalUlang{background:var(--lav)}.Menunggu{background:var(--blue)}.Dipanggil{background:var(--orange)}.DalamLayanan{background:var(--pink)}.Selesai{background:#B6E8C0}.TidakHadir,.Dibatalkan,.Full{background:var(--grey)}
+.Pending{background:#FFF0A8}.Accepted{background:var(--mint)}.Rejected{background:#FFB3B8}.Rescheduled{background:var(--lav)}.Waiting{background:var(--blue)}.Called{background:var(--orange)}.InService{background:var(--pink)}.Done{background:#B6E8C0}.No-show,.Cancelled,.Full{background:var(--grey)}
 .qn{font-family:Fredoka;font-size:1.4rem;background:var(--red);color:#fff;border-radius:50%;width:48px;height:48px;display:grid;place-items:center;flex:none;border:3px solid #fff;box-shadow:0 0 0 2px var(--red)}
 label{display:block;margin:10px 0 4px}
 input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:2px solid var(--brown);border-radius:16px;background:#fff;color:var(--brown)}
@@ -89,13 +89,13 @@ const svcColor=[ "var(--pink)","var(--blue)","var(--mint)","var(--lav)"];
 let slots=[];
 (function(){let id=1;days.forEach(d=>{for(let m=480;m<900;m+=30){const f=n=>String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");slots.push({id:id++,date:d,start:f(m),end:f(m+30),quota:2,booked:0})}})})();
 let appts=[],aid=1;
-function seed(uid,svc,date,time,note,status,extra={}){const s=slots.find(x=>x.date==date&&x.start==time);if(s&&!["Ditolak","Dibatalkan"].includes(status))s.booked++;appts.push({id:aid++,uid,svc,date,time,note,status,reason:"",q:null,qs:null,...extra})}
-seed(4,0,TODAY,"08:00","Headache since morning","Diterima",{q:1,qs:"Selesai"});
-seed(5,1,TODAY,"08:30","Sprained ankle","Diterima",{q:2,qs:"Dalam Layanan"});
-seed(6,3,TODAY,"09:00","Feeling stressed before exams","Diterima",{q:3,qs:"Menunggu"});
-seed(4,2,days[1],"09:00","Need certificate for internship","Diajukan");
-seed(5,0,days[1],"10:00","Sore throat","Diajukan");
-seed(6,0,days[2],"10:30","Fever","Ditolak",{reason:"Please visit the ER for high fever."});
+function seed(uid,svc,date,time,note,status,extra={}){const s=slots.find(x=>x.date==date&&x.start==time);if(s&&!["Rejected","Cancelled"].includes(status))s.booked++;appts.push({id:aid++,uid,svc,date,time,note,status,reason:"",q:null,qs:null,...extra})}
+seed(4,0,TODAY,"08:00","Headache since morning","Accepted",{q:1,qs:"Done"});
+seed(5,1,TODAY,"08:30","Sprained ankle","Accepted",{q:2,qs:"In Service"});
+seed(6,3,TODAY,"09:00","Feeling stressed before exams","Accepted",{q:3,qs:"Waiting"});
+seed(4,2,days[1],"09:00","Need certificate for internship","Pending");
+seed(5,0,days[1],"10:00","Sore throat","Pending");
+seed(6,0,days[2],"10:30","Fever","Rejected",{reason:"Please visit the ER for high fever."});
 let me=null,view="",tab="up";
 const $=id=>document.getElementById(id);
 const cls=s=>s.replace(/ /g,"");
@@ -135,39 +135,39 @@ return `<div class="card"><h2>Book an appointment</h2><label>Service</label><sel
 function submitAppointment(){const note=$("bn").value.trim(),s=slots.find(x=>x.id==bk.slot);
 if(!s)return msg("bm","Please pick a time slot.",1);if(!note)return msg("bm","Please add a short complaint.",1);
 if(s.booked>=s.quota)return msg("bm","Sorry, that slot is full. Pick another one.",1);
-if(appts.some(a=>a.uid==me.id&&a.date==s.date&&a.time==s.start&&!["Ditolak","Dibatalkan"].includes(a.status)))return msg("bm","You already booked this time.",1);
-s.booked++;appts.push({id:aid++,uid:me.id,svc:bk.svc,date:s.date,time:s.start,note,status:"Diajukan",reason:"",q:null,qs:null});
-bk.slot=null;go("book");msg("bm","Request sent! Status: Diajukan")}
+if(appts.some(a=>a.uid==me.id&&a.date==s.date&&a.time==s.start&&!["Rejected","Cancelled"].includes(a.status)))return msg("bm","You already booked this time.",1);
+s.booked++;appts.push({id:aid++,uid:me.id,svc:bk.svc,date:s.date,time:s.start,note,status:"Pending",reason:"",q:null,qs:null});
+bk.slot=null;go("book");msg("bm","Request sent! Status: Pending")}
 
 /* ===== Student: my appointments ===== */
-function mineView(){const mine=appts.filter(a=>a.uid==me.id),hist=mine.filter(a=>a.qs=="Selesai"||a.qs=="Tidak Hadir"),up=mine.filter(a=>!hist.includes(a));
-const list=a=>`<div class="row"><div><b>${services[a.svc]}</b><br>${a.date} · ${a.time}<br><small>${esc(a.note)}</small>${a.q?`<br>Queue #${a.q}`:""}${a.reason?`<br><small>Reason: ${esc(a.reason)}</small>`:""}</div><div>${tag(a.qs&&a.status=="Diterima"?a.qs:a.status)}${["Diajukan","Diterima"].includes(a.status)&&(!a.qs||a.qs=="Menunggu")?` <button class="btn sm" onclick="cancelAppointment(${a.id})">Cancel</button>`:""}</div></div>`;
+function mineView(){const mine=appts.filter(a=>a.uid==me.id),hist=mine.filter(a=>a.qs=="Done"||a.qs=="No-show"),up=mine.filter(a=>!hist.includes(a));
+const list=a=>`<div class="row"><div><b>${services[a.svc]}</b><br>${a.date} · ${a.time}<br><small>${esc(a.note)}</small>${a.q?`<br>Queue #${a.q}`:""}${a.reason?`<br><small>Reason: ${esc(a.reason)}</small>`:""}</div><div>${tag(a.qs&&a.status=="Accepted"?a.qs:a.status)}${["Pending","Accepted"].includes(a.status)&&(!a.qs||a.qs=="Waiting")?` <button class="btn sm" onclick="cancelAppointment(${a.id})">Cancel</button>`:""}</div></div>`;
 const L=tab=="up"?up:hist;
 return `<div class="card"><h2>My appointments</h2><button class="btn sm ${tab=="up"?"pri":""}" onclick="tab='up';go('mine')">Upcoming</button> <button class="btn sm ${tab=="h"?"pri":""}" onclick="tab='h';go('mine')">Visit history</button>${L.map(list).join("")||"<p>Nothing here yet. Book your first visit!</p>"}</div>`}
-function cancelAppointment(id){const a=appts.find(x=>x.id==id);if(!confirm("Cancel this appointment?"))return;a.status="Dibatalkan";a.qs=null;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;go("mine")}
+function cancelAppointment(id){const a=appts.find(x=>x.id==id);if(!confirm("Cancel this appointment?"))return;a.status="Cancelled";a.qs=null;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;go("mine")}
 
 /* ===== Staff: pending ===== */
-function pendingView(){const p=appts.filter(a=>a.status=="Diajukan");
+function pendingView(){const p=appts.filter(a=>a.status=="Pending");
 return `<div class="card"><h2>Pending requests</h2>${p.map(a=>`<div class="row"><div><b>${esc(uname(a.uid))}</b> · ${services[a.svc]}<br>${a.date} ${a.time}<br><small>${esc(a.note)}</small></div><div>${tag(a.status)}<br><button class="btn sm pri" onclick="acceptAppointment(${a.id})">Accept</button> <button class="btn sm" onclick="modalReject(${a.id})">Reject</button> <button class="btn sm" onclick="modalResched(${a.id})">Reschedule</button></div></div>`).join("")||"<p>All caught up!</p>"}</div>`}
 function nextQueueNo(date){return Math.max(0,...appts.filter(a=>a.date==date&&a.q).map(a=>a.q))+1}
-function acceptAppointment(id){const a=appts.find(x=>x.id==id);a.status="Diterima";a.q=nextQueueNo(a.date);a.qs="Menunggu";go("pending")}
+function acceptAppointment(id){const a=appts.find(x=>x.id==id);a.status="Accepted";a.q=nextQueueNo(a.date);a.qs="Waiting";go("pending")}
 function closeModal(){$("modal").innerHTML=""}
 function modalReject(id){$("modal").innerHTML=`<div class="modal"><div class="card"><h3>Reject request</h3><label>Reason (required)</label><textarea id="rr" rows="3"></textarea><div id="rm"></div><button class="btn pri" onclick="rejectAppointment(${id})">Reject</button> <button class="btn" onclick="closeModal()">Back</button></div></div>`}
-function rejectAppointment(id){const r=$("rr").value.trim();if(!r)return msg("rm","A reason is required.",1);const a=appts.find(x=>x.id==id);a.status="Ditolak";a.reason=r;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;closeModal();go("pending")}
+function rejectAppointment(id){const r=$("rr").value.trim();if(!r)return msg("rm","A reason is required.",1);const a=appts.find(x=>x.id==id);a.status="Rejected";a.reason=r;const s=slots.find(x=>x.date==a.date&&x.start==a.time);if(s)s.booked--;closeModal();go("pending")}
 function modalResched(id){const opts=slots.filter(s=>left(s)>0).map(s=>`<option value="${s.id}">${s.date} ${s.start}</option>`).join("");
 $("modal").innerHTML=`<div class="modal"><div class="card"><h3>Reschedule</h3><label>New slot</label><select id="rs">${opts}</select><br><br><button class="btn pri" onclick="rescheduleAppointment(${id})">Save</button> <button class="btn" onclick="closeModal()">Back</button></div></div>`}
-function rescheduleAppointment(id){const a=appts.find(x=>x.id==id),n=slots.find(x=>x.id==+$("rs").value),o=slots.find(x=>x.date==a.date&&x.start==a.time);if(o)o.booked--;n.booked++;a.date=n.date;a.time=n.start;a.status="Jadwal Ulang";closeModal();go("pending")}
+function rescheduleAppointment(id){const a=appts.find(x=>x.id==id),n=slots.find(x=>x.id==+$("rs").value),o=slots.find(x=>x.date==a.date&&x.start==a.time);if(o)o.booked--;n.booked++;a.date=n.date;a.time=n.start;a.status="Rescheduled";closeModal();go("pending")}
 
 /* ===== Staff: queue (menu board) ===== */
-const FLOW={"Menunggu":["Dipanggil","Tidak Hadir"],"Dipanggil":["Dalam Layanan","Tidak Hadir"],"Dalam Layanan":["Selesai"]};
+const FLOW={"Waiting":["Called","No-show"],"Called":["In Service","No-show"],"In Service":["Done"]};
 function queueView(){const q=appts.filter(a=>a.date==TODAY&&a.q).sort((a,b)=>a.q-b.q);
-return `<div class="board"><div style="display:flex;justify-content:center;align-items:flex-end;gap:8px;margin-bottom:10px"><svg width="70" height="77"><use href="#doc"/></svg><span class="ribbon" style="display:inline-block">Today's Queue · ${TODAY}</span><svg class="stk" width="64" height="40"><use href="#rb"/></svg></div><div class="card" style="margin:0;border-style:solid">${q.map(a=>`<div class="row"><div style="display:flex;gap:10px;align-items:center"><div class="qn">${a.q}</div><div><b>${esc(uname(a.uid))}</b><br><small>${services[a.svc]} · ${a.time}</small></div></div><div>${tag(a.qs)}<br>${(FLOW[a.qs]||[]).map(n=>`<button class="btn sm ${n=="Tidak Hadir"?"":"pri"}" onclick="updateQueueStatus(${a.id},'${n}')">${n}</button>`).join(" ")}</div></div>`).join("")||"<p>No one in the queue yet.</p>"}</div></div>`}
+return `<div class="board"><div style="display:flex;justify-content:center;align-items:flex-end;gap:8px;margin-bottom:10px"><svg width="70" height="77"><use href="#doc"/></svg><span class="ribbon" style="display:inline-block">Today's Queue · ${TODAY}</span><svg class="stk" width="64" height="40"><use href="#rb"/></svg></div><div class="card" style="margin:0;border-style:solid">${q.map(a=>`<div class="row"><div style="display:flex;gap:10px;align-items:center"><div class="qn">${a.q}</div><div><b>${esc(uname(a.uid))}</b><br><small>${services[a.svc]} · ${a.time}</small></div></div><div>${tag(a.qs)}<br>${(FLOW[a.qs]||[]).map(n=>`<button class="btn sm ${n=="No-show"?"":"pri"}" onclick="updateQueueStatus(${a.id},'${n}')">${n}</button>`).join(" ")}</div></div>`).join("")||"<p>No one in the queue yet.</p>"}</div></div>`}
 function updateQueueStatus(id,to){const a=appts.find(x=>x.id==id);if(!(FLOW[a.qs]||[]).includes(to))return alert("Invalid transition: steps cannot be skipped.");a.qs=to;go("queue")}
 
 /* ===== Dashboard ===== */
 function dashView(){const t=appts.filter(a=>a.date==TODAY&&a.q),c=s=>t.filter(a=>a.qs==s).length;
-const st=[["Total today",t.length,"var(--cream)"],["Waiting",c("Menunggu"),"var(--blue)"],["In service",c("Dalam Layanan"),"var(--pink)"],["Done",c("Selesai"),"var(--mint)"],["No-show",c("Tidak Hadir"),"var(--grey)"]];
-const per=services.map((s,i)=>appts.filter(a=>a.svc==i&&a.status!="Ditolak"&&a.status!="Dibatalkan").length),mx=Math.max(1,...per);
+const st=[["Total today",t.length,"var(--cream)"],["Waiting",c("Waiting"),"var(--blue)"],["In service",c("In Service"),"var(--pink)"],["Done",c("Done"),"var(--mint)"],["No-show",c("No-show"),"var(--grey)"]];
+const per=services.map((s,i)=>appts.filter(a=>a.svc==i&&a.status!="Rejected"&&a.status!="Cancelled").length),mx=Math.max(1,...per);
 return `<div class="grid">${st.map(s=>`<div class="stat" style="background:${s[2]}"><b>${s[1]}</b>${s[0]}</div>`).join("")}</div><div class="card"><h3>Workload per service</h3>${services.map((s,i)=>`<div>${s} (${per[i]})<div class="bar" style="width:${Math.max(6,per[i]/mx*100)}%;background:${svcColor[i%4]}"></div></div>`).join("")}</div>`}
 
 /* ===== Admin ===== */
@@ -181,7 +181,7 @@ if(!(q>0))return msg("sm","Quota must be greater than 0.",1);
 if([0,6].includes(dow))return msg("sm","Clinic is open Mon–Fri only.",1);
 if(a<"08:00"||b>"15:00"||a>=b)return msg("sm","Hours must be within 08:00–15:00 and start before end.",1);
 slots.push({id:slots.length+1,date:d,start:a,end:b,quota:q,booked:0});msg("sm","Slot added.")}
-function usersView(){return `<div class="card"><h3>Users</h3>${users.map(u=>`<div class="row"><span>${esc(u.name)} <small>${u.email}</small></span><span class="tag Menunggu">${u.role}</span></div>`).join("")}</div>`}
+function usersView(){return `<div class="card"><h3>Users</h3>${users.map(u=>`<div class="row"><span>${esc(u.name)} <small>${u.email}</small></span><span class="tag Waiting">${u.role}</span></div>`).join("")}</div>`}
 
 /* ===== Health check placeholder (/api/health) ===== */
 function checkHealth(){$("hc").lastChild.textContent=" System OK"}
