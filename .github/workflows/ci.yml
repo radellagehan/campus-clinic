@@ -23,8 +23,8 @@ jobs:
         run: node scripts/check-frontend.js frontend/index.html
 
       - name: Lint HTML (htmlhint)
-        run: npx --yes htmlhint@1.1.4 frontend/index.html || true
-        # "|| true" keeps the build green while the prototype is being cleaned up.
+        run: npx --yes htmlhint@1.1.4 frontend/index.html 
+        #  keeps the build green while the prototype is being cleaned up.
         # Remove it once warnings are fixed so lint failures block the PR.
 
   # ---------------------------------------------------------------
