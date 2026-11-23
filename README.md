@@ -101,3 +101,5 @@ Backend install, lint, test and build are added in Sprint 2.
 The system stores only a short complaint text, never detailed medical data. Access is restricted by role.
 
 Sprint 1 CI test.
+> **Sprint 1 note:** This repository currently contains a working frontend prototype with simulated data.  
+> Backend implementation, database persistence, API endpoints, authentication, and slot-quota transaction logic are planned for Sprint 
