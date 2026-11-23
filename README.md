@@ -32,6 +32,7 @@ daily queue, and monitor service workload.
 Out of scope: medical records, payment/insurance, WhatsApp/SMS/email notifications, multi-clinic, native mobile app.
 
 ## Tech stack
+Backend and database services will be containerized using Docker in Sprint 2.
 - **Frontend:** HTML/CSS/JS prototype (current), React or Next.js (planned)
 - **Backend:** Node.js + Express REST API (planned, Sprint 2)
 - **Database:** PostgreSQL / Supabase (planned)
@@ -58,14 +59,9 @@ No build step is needed. Open `frontend/index.html` in a browser, or serve it:
 ```bash
 npx serve frontend
 ```
+The prototype demonstrates the complete intended user journey for early feedback; Sprint 2 will implement these workflows with real authentication, database persistence, API validation, and slot-quota enforcement.
 
-Demo accounts (dummy data, resets on refresh):
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@campus.edu | admin123 |
-| Staff | nina@campus.edu | staff123 |
-| Student | sari@campus.edu | student123 |
+Demo credentials are documented in .env.example (demo-only credentials, do not use in production).
 
 ## Branching strategy
 - `main`: stable, release-ready
@@ -100,6 +96,6 @@ Backend install, lint, test and build are added in Sprint 2.
 ## Privacy note
 The system stores only a short complaint text, never detailed medical data. Access is restricted by role.
 
-Sprint 1 CI test.
+
 > **Sprint 1 note:** This repository currently contains a working frontend prototype with simulated data.  
-> Backend implementation, database persistence, API endpoints, authentication, and slot-quota transaction logic are planned for Sprint 
+> Backend implementation, database persistence, API endpoints, authentication, and slot-quota transaction logic are planned for Sprint 2
