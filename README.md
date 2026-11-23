@@ -99,3 +99,5 @@ Backend install, lint, test and build are added in Sprint 2.
 
 ## Privacy note
 The system stores only a short complaint text, never detailed medical data. Access is restricted by role.
+
+Sprint 1 CI test.
